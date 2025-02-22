@@ -5,6 +5,9 @@
     "clientKind": "git",
     "useIgnoreFile": false
   },
+  "organizeImports": {
+    "enabled": false
+  },
   "files": {
     "include": ["**/*.js", "**/*.ts", "**/*.json"]
   },
