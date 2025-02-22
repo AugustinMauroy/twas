@@ -18,7 +18,7 @@
  * @param cycle The cycle to be checked.
  * @returns The number of times the interval fits into the cycle.
  */
-export function is (interval: number, cycle: number): number {
+export function is(interval: number, cycle: number): number {
 	return cycle >= interval ? Math.round(cycle / interval) : 0;
 }
 
