@@ -13,3 +13,7 @@ import { twas } from '@augustinmauroy/twas';
 const strDiff = twas(new Date('2021-01-01'), new Date('2021-01-02'));
 console.log(strDiff); // '1 day ago'
 ```
+
+## Prior art
+
+This library is inspired by [`vutran/twas`](https://github.com/vutran/twas).
