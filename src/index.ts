@@ -1,6 +1,11 @@
 /* @ts-self-types="./index.d.ts" */
 
 /**
+ * This module contains functions to calculate intervals and time differences.
+ * @module
+ */
+
+/**
  * This function returns the number of times the interval fits into the cycle.
  *
  * @example
@@ -8,15 +13,25 @@
  * const cycle = 120;
  * const result = is(interval, cycle);
  * console.log(result); // 2
+ *
+ * @param interval The interval to be checked.
+ * @param cycle The cycle to be checked.
+ * @returns The number of times the interval fits into the cycle.
  */
-export const is = (interval: number, cycle: number): number =>
-	cycle >= interval ? Math.round(cycle / interval) : 0;
+export function is(interval: number, cycle: number): number {
+	return cycle >= interval ? Math.round(cycle / interval) : 0;
+}
 
 /**
+ * This function calculates the time difference between a given time and the current time in human-readable format.
  *
  * @example
  * const diff = twas(new Date("1/1/2000").getTime() - 1000, new Date("1/1/2000").getTime());
  * console.log(diff); // just now
+ *
+ * @param time The past time to compare with the current time.
+ * @param now The current time. Defaults to Date.now().
+ * @returns A human-readable string representing the time difference.
  */
 export function twas(time: number, now = Date.now()): string {
 	const secs = (now - time) / 1000;
