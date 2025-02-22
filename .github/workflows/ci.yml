@@ -59,7 +59,7 @@ jobs:
       - name: Type check
         run: node --run types:check
 
-  test:
+  test-node:
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -72,15 +72,40 @@ jobs:
         uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.nvmrc'
-      - name: Cache dependencies
-        uses: actions/cache@f4b3439a656ba812b8cb417d2d49f9c810103092 # v3.4.0
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        run: npm ci
       - name: Test
-        run: node --run test
+        run: node --run test-node
+
+  test-bun:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Run tests
+        run: bun test-bun
+
+  test-deno:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x # Run with latest stable Deno.
+      - name: Run Deno task
+        run: deno task test-deno
 
   dry-run:
     runs-on: ubuntu-latest
