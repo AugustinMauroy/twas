@@ -35,6 +35,9 @@ export function is(interval: number, cycle: number): number {
  */
 export function twas(time: number, now = Date.now()): string {
 	const secs = (now - time) / 1000;
+
+	if (secs <= 1) return "just now";
+
 	const mins = is(60, secs);
 	const hours = is(60, mins);
 	const days = is(24, hours);
@@ -45,9 +48,6 @@ export function twas(time: number, now = Date.now()): string {
 	let amt = years;
 	let cycle = "year";
 
-	if (secs <= 1) {
-		return "just now";
-	}
 	if (years > 0) {
 		amt = years;
 		cycle = "year";
@@ -72,8 +72,10 @@ export function twas(time: number, now = Date.now()): string {
 	}
 
 	const v = Math.round(amt);
+	const isPlural = v > 1;
+	const isHour = amt === hours;
 
-	return `${v === 1 ? (amt === hours ? "an" : "a") : v} ${cycle}${v > 1 ? "s" : ""} ago`;
+	return `${v === 1 ? (isHour ? "an" : "a") : v} ${cycle}${isPlural ? "s" : ""} ago`;
 }
 
 export default twas;
