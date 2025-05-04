@@ -6,24 +6,7 @@
  */
 
 /**
- * This function returns the number of times the interval fits into the cycle.
- *
- * @example
- * const interval = 60;
- * const cycle = 120;
- * const result = is(interval, cycle);
- * console.log(result); // 2
- *
- * @param interval The interval to be checked.
- * @param cycle The cycle to be checked.
- * @returns The number of times the interval fits into the cycle.
- */
-export function is(interval: number, cycle: number): number {
-	return cycle >= interval ? Math.round(cycle / interval) : 0;
-}
-
-/**
- * This function calculates the time difference between a given time and the current time in human-readable format.
+ * This function calculates the time difference between a given time and the current time in human-readable format using the Intl.RelativeTimeFormat API.
  *
  * @example
  * const diff = twas(new Date("1/1/2000").getTime() - 1000, new Date("1/1/2000").getTime());
@@ -33,49 +16,79 @@ export function is(interval: number, cycle: number): number {
  * @param now The current time. Defaults to Date.now().
  * @returns A human-readable string representing the time difference.
  */
-export function twas(time: number, now = Date.now()): string {
-	const secs = (now - time) / 1000;
+export function twas(
+	timeP: string | number | Date,
+	timeN: string | number | Date = Date.now(),
+): string {
+	const past = new Date(timeP);
+	const now = new Date(timeN);
+	const diff = Math.abs(now.getTime() - past.getTime());
 
-	if (secs <= 1) return "just now";
+	const duration = {
+		years: Math.floor(diff / (1000 * 60 * 60 * 24 * 365)),
+		months: Math.floor(
+			(diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30),
+		),
+		weeks: Math.floor(
+			(diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7),
+		),
+		days: Math.floor(
+			(diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
+		),
+		hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+		minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+		seconds: Math.floor((diff % (1000 * 60)) / 1000),
+	};
 
-	const mins = is(60, secs);
-	const hours = is(60, mins);
-	const days = is(24, hours);
-	const weeks = is(7, days);
-	const months = is(30, days);
-	const years = is(12, months);
+	// @ts-ignore - TS doesn't know about this API yet
+	const formatter = new Intl.DurationFormat("en", {
+		style: "long",
+		nu: "latn",
+	});
 
-	let amt = years;
-	let cycle = "year";
-
-	if (years > 0) {
-		amt = years;
-		cycle = "year";
-	} else if (months > 0) {
-		amt = months;
-		cycle = "month";
-	} else if (weeks > 0) {
-		amt = weeks;
-		cycle = "week";
-	} else if (days > 0) {
-		amt = days;
-		cycle = "day";
-	} else if (hours > 0) {
-		amt = hours;
-		cycle = "hour";
-	} else if (mins > 0) {
-		amt = mins;
-		cycle = "minute";
-	} else if (secs > 0) {
-		amt = secs;
-		cycle = "second";
+	if (duration.years >= 1) {
+		return `${formatter.format({ years: duration.years })} ago`.replace(
+			"1 ",
+			"a ",
+		);
 	}
-
-	const v = Math.round(amt);
-	const isPlural = v > 1;
-	const isHour = amt === hours;
-
-	return `${v === 1 ? (isHour ? "an" : "a") : v} ${cycle}${isPlural ? "s" : ""} ago`;
+	if (duration.months >= 1) {
+		return `${formatter.format({ months: duration.months })} ago`.replace(
+			"1 ",
+			"a ",
+		);
+	}
+	if (duration.weeks >= 1) {
+		return `${formatter.format({ weeks: duration.weeks })} ago`.replace(
+			"1 ",
+			"a ",
+		);
+	}
+	if (duration.days >= 1) {
+		return `${formatter.format({ days: duration.days })} ago`.replace(
+			"1 ",
+			"a ",
+		);
+	}
+	if (duration.hours >= 1) {
+		return `${formatter.format({ hours: duration.hours })} ago`.replace(
+			"1 ",
+			"an ",
+		);
+	}
+	if (duration.minutes >= 1) {
+		return `${formatter.format({ minutes: duration.minutes })} ago`.replace(
+			"1 ",
+			"a ",
+		);
+	}
+	if (duration.seconds <= 1) {
+		return "just now";
+	}
+	return `${formatter.format({ seconds: duration.seconds })} ago`.replace(
+		"1 ",
+		"a ",
+	);
 }
 
 export default twas;
