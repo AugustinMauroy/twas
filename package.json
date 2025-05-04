@@ -1,7 +1,7 @@
 {
   "name": "@augustinmauroy/twas",
   "description": "A relative time string library",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "author": "Augustin Mauroy",
   "license": "MIT",
